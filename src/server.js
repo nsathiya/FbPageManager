@@ -28,6 +28,7 @@ import schema from './data/schema';
 import routes from './routes';
 import assets from './assets.json'; // eslint-disable-line import/no-unresolved
 import { port, auth } from './config';
+import * as dbUtils from './core/dbUtils.js';
 
 const app = express();
 
@@ -81,6 +82,18 @@ app.use('/graphql', expressGraphQL(req => ({
   rootValue: { request: req },
   pretty: __DEV__,
 })));
+
+//
+// Server-side data pull
+//
+
+app.get('/getSplashData', async (req, res, next) => {
+  const d = {};
+  d.data = await dbUtils.getSplashData();
+
+  res.status(200).send(d);
+},
+);
 
 //
 // Register server-side rendering middleware

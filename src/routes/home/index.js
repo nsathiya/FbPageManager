@@ -17,22 +17,32 @@ export default {
   path: '/',
 
   async action() {
-    const resp = await fetch('/graphql', {
-      method: 'post',
+    // const resp = await fetch('/graphql', {
+    //   method: 'post',
+    //   headers: {
+    //     Accept: 'application/json',
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     query: '{news{title,link,content}}',
+    //   }),
+    //   credentials: 'include',
+    // });
+    const resp = await fetch('/getSplashData', {
+      method: 'get',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        query: '{news{title,link,content}}',
-      }),
-      credentials: 'include',
     });
+
     const { data } = await resp.json();
-    if (!data || !data.news) throw new Error('Failed to load the news feed.');
+
+    console.log('__data__', data);
+    if (!data) throw new Error('Failed to load splash data.');
     return {
-      title: 'Zasso Chocolates',
-      component: <Layout><Home news={data.news} /></Layout>,
+      title: 'Telivy',
+      component: <Layout><Home data={data} /></Layout>,
     };
   },
 
