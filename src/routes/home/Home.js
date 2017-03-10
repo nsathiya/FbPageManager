@@ -10,7 +10,11 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Home.css';
+import image from './profbg2.jpeg';
 
+let mainImage = {
+  "backgroundImage": `url(${ image })`
+};
 
 class Home extends React.Component {
   static propTypes = {
@@ -24,33 +28,32 @@ class Home extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>Our Specialists</h1>
-          {
-          // Pulling data from graphql
-          // {this.props.news.map(item => (
-          //   <article key={item.link} className={s.newsItem}>
-          //     <h1 className={s.newsTitle}><a href={item.link}>{item.title}</a></h1>
-          //     <div
-          //       className={s.newsDesc}
-          //       // eslint-disable-next-line react/no-danger
-          //       dangerouslySetInnerHTML={{ __html: item.content }}
-          //     />
-          //   </article>
-          // ))}
-            <div>
-
-              <div className="row">
-                {this.props.data.map((item, i) => (
-                  <div className="col-xs-4" key={i}>
-                    <h4>{item.title}</h4>
-                    <div>{item.content}</div>
-                  </div>
-                  ),
-                )}
+          
+          <section className={s.mainImg} style={mainImage} >
+            <div className="row">
+              <div className={s.mainLogo}> 
+                <h1 className="col-xs-6 col-xs-offset-3"> Get answers from experts. Right away. </h1>
               </div>
-
             </div>
-          }
+          </section>
+
+          <section>
+            <div className="row">
+              <h1 className= "col-xs-6 col-xs-offset-3"> Let us help you, get help faster. </h1>
+            </div>
+          </section>
+
+          <section>
+            <div className="row">
+              {this.props.data.map((item, i) => (
+                <div className="col-xs-4" key={i}>
+                  <h4>{item.title}</h4>
+                  <div>{item.content}</div>
+                </div>
+                ),
+              )}
+            </div>
+          </section>
         </div>
       </div>
     );

@@ -5,7 +5,7 @@ import { MongoClient } from 'mongodb';
 import { mongodbHost } from '../config';
 
 
-const mongodbUrl = `mongodb://${mongodbHost}`;   // + ':27017/telivy';
+const mongodbUrl = `mongodb://${mongodbHost}` + ':15834/telivy_staging?ssl=true';
 
 // COLLECTIONS
 const collectionSplash = 'splashData';
