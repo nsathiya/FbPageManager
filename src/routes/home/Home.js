@@ -12,8 +12,8 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Home.css';
 import image from './profbg2.jpeg';
 
-let mainImage = {
-  "backgroundImage": `url(${ image })`
+const mainImage = {
+  backgroundImage: `url(${image})`,
 };
 
 class Home extends React.Component {
@@ -28,10 +28,10 @@ class Home extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          
+
           <section className={s.mainImg} style={mainImage} >
             <div className="row">
-              <div className={s.mainLogo}> 
+              <div className={s.mainLogo}>
                 <h1 className="col-xs-6 col-xs-offset-3"> Get answers from experts. Right away. </h1>
               </div>
             </div>
@@ -39,7 +39,7 @@ class Home extends React.Component {
 
           <section>
             <div className="row">
-              <h1 className= "col-xs-6 col-xs-offset-3"> Let us help you, get help faster. </h1>
+              <h1 className="col-xs-6 col-xs-offset-3"> Let us help you, get help faster. </h1>
             </div>
           </section>
 
