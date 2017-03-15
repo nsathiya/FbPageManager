@@ -18,6 +18,7 @@ export default {
   path: '/register',
 
   action() {
+
     return {
       title,
       component: <Layout><Register title={title} /></Layout>,
