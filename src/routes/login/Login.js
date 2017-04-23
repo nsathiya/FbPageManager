@@ -10,7 +10,7 @@
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Login.css';
-import Auth from '../../components/Utils/Auth.js'
+import Auth from '../../components/Utils/Auth.js';
 
 class Login extends React.Component {
   static propTypes = {
@@ -20,23 +20,20 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '', 
-      password: ''
-    }
+      email: '',
+      password: '',
+    };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.statusChangeCallback = this.statusChangeCallback.bind(this);
   }
 
 
-
-  componentDidMount(){
-
-    FB.getLoginStatus(function(response) {
-         console.log('Got login status');   
-        this.statusChangeCallback(response);
-      }.bind(this));
-
+  componentDidMount() {
+    // FB.getLoginStatus((response) => {
+    //   console.log('Got login status');
+    //   this.statusChangeCallback(response);
+    // });
   }
   // componentDidMount() {
   //   window.fbAsyncInit = function() {
@@ -61,7 +58,7 @@ class Login extends React.Component {
   //     //
   //     // These three cases are handled in the callback function.
   //     FB.getLoginStatus(function(response) {
-  //        console.log('Got login status');   
+  //        console.log('Got login status');
   //       this.statusChangeCallback(response);
   //     }.bind(this));
   //   }.bind(this);
@@ -85,102 +82,90 @@ class Login extends React.Component {
     // Full docs on the response object can be found in the documentation
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
-
-
       Auth.setCookieInfo('userAccessToken', response.authResponse.accessToken);
-
-
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
       document.getElementById('status').innerHTML = 'Please log ' +
         'into this app.';
-        FB.login(function(){
-          FB.api('/me/accounts', function(response){
-            console.log('accounts');
-            console.log(response);
-            var pageAccessToken = response.data[0].access_token;
-            console.log('pageAccessToken' + pageAccessToken);
-            FB.api(
+      FB.login(() => {
+        FB.api('/me/accounts', (response) => {
+          console.log('accounts');
+          console.log(response);
+          const pageAccessToken = response.data[0].access_token;
+          console.log(`pageAccessToken${pageAccessToken}`);
+          FB.api(
               '/1858035424460206/feed/',
               'POST',
-              {
-                "message":"\"hello\"",
-                "access_token": pageAccessToken
-              },
-              function(response) {
+            {
+              message: '"hello"',
+              access_token: pageAccessToken,
+            },
+              (response) => {
                 // Insert your code here
                 console.log(response);
-              }
+              },
             );
-
-          });
-        }, {scope: 'publish_actions, manage_pages, publish_pages, read_insights, manage_pages'});
+        });
+      }, { scope: 'publish_actions, manage_pages, publish_pages, read_insights, manage_pages' });
     } else {
       // The person is not logged into Facebook, so we're not sure if
       // they are logged into this app or not.
       document.getElementById('status').innerHTML = 'Please log ' +
         'into this app.';
-        FB.login(function(response){
+      FB.login((response) => {
+        Auth.setCookieInfo('userAccessToken', response.accessToken);
 
-          Auth.setCookieInfo('userAccessToken', response.accessToken);
-          
-          FB.api('/me/accounts', function(response){
-            console.log('accounts');
-            console.log(response);
-            var pageAccessToken = response.data[0].access_token;
-            console.log('pageAccessToken' + pageAccessToken);
-          });
-        }, {scope: 'publish_actions, manage_pages, publish_pages, read_insights, manage_pages'});
+        FB.api('/me/accounts', (response) => {
+          console.log('accounts');
+          console.log(response);
+          const pageAccessToken = response.data[0].access_token;
+          console.log(`pageAccessToken${pageAccessToken}`);
+        });
+      }, { scope: 'publish_actions, manage_pages, publish_pages, read_insights, manage_pages' });
     }
   }
 
   handleSubmit(e) {
+    e.preventDefault();
 
-    e.preventDefault()
-    
     const email = this.state.email.trim();
     const password = this.state.password.trim();
-    
-    if ( !email || !password ) {
+
+    if (!email || !password) {
       return;
     }
-    
-    const loginObj = {
-      email: email, 
-      password: password
-    }
-   
-    console.log('loginObj', loginObj)
 
-    fetch('/login', 
-      { method: 'post', 
+    const loginObj = {
+      email,
+      password,
+    };
+
+    console.log('loginObj', loginObj);
+
+    fetch('/login',
+      { method: 'post',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(loginObj)
+        body: JSON.stringify(loginObj),
       })
-    .then((res) => {
-        return res.json();
-    }).then((json) => {
-        console.log(json);
-        Auth.authenticateUser(json.token);
-        Auth.setCookieInfo('user', json.user);
-        window.location.href = `/dashboard`
+    .then(res => res.json()).then((json) => {
+      console.log(json);
+      Auth.authenticateUser(json.token);
+      Auth.setCookieInfo('user', json.user);
+      window.location.href = '/dashboard';
     }).catch((err) => {
-        console.log('err', err)
+      console.log('err', err);
     });
-
   }
 
   handleChange(e) {
-    
     const name = e.target.name;
     const value = e.target.value;
     this.setState({
-      [name]: value
-    })
-
+      [name]: value,
+    });
   }
 
   render() {
@@ -195,20 +180,20 @@ class Login extends React.Component {
                 </div>
                 <div className="form-group">
                   <label className="control-label">Status</label>
-                  <div id="status"></div>
+                  <div id="status" />
                 </div>
                 <div className="form-group">
                   <label className="control-label">Email</label>
-                  <input id="signupEmail" name="email" type="email" maxLength="50" className="form-control" onChange={this.handleChange}/>
+                  <input id="signupEmail" name="email" type="email" maxLength="50" className="form-control" onChange={this.handleChange} />
                 </div>
                 <div className="form-group">
                   <label className="control-label">Password</label>
-                  <input id="signupPassword" name="password" type="password" maxLength="25" className="form-control" placeholder="at least 6 characters" onChange={this.handleChange}/>
+                  <input id="signupPassword" name="password" type="password" maxLength="25" className="form-control" placeholder="at least 6 characters" onChange={this.handleChange} />
                 </div>
                 <div className="form-group">
                   <button id="signupSubmit" type="submit" className="btn btn-info btn-block">Create your account</button>
                 </div>
-                
+
                 <p>Dont have an account? <a href="/register">Sign Up</a></p>
               </form>
             </div>

@@ -56,7 +56,7 @@ class Html extends React.Component {
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: children }}
           />
-         
+
 
           {scripts.map(script => <script key={script} src={script} />)}
           {analytics.google.trackingId &&
@@ -71,7 +71,7 @@ class Html extends React.Component {
             <script src="https://www.google-analytics.com/analytics.js" async defer />
           }
 
-          <script src="http://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.4&appId=1438461692877772"/>
+          <script src="http://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.4&appId=1438461692877772" />
         </body>
       </html>
     );
