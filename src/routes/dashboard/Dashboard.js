@@ -2,9 +2,16 @@ import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Dashboard.css';
 import Auth from '../../components/Utils/Auth.js';
+import {Button, DropdownButton, MenuItem} from 'react-bootstrap';
 // import PostPage from '../PostPage.js';
 
 class PostsHistory extends React.Component {
+
+  static propTypes = {
+    pageId: PropTypes.string,
+    pageToken: PropTypes.string
+  }.isRequired
+
   constructor(props) {
     super(props);
     this.state = {
@@ -24,137 +31,85 @@ class PostsHistory extends React.Component {
   }
 
   fetchUnpublishedPosts() {
-    const userAccessToken = Auth.getCookieInfo('userAccessToken');
-
-    console.log('fetching unpublishedPosts');
-
-    if (FB) {
-      FB.api('/me/accounts', {
-        access_token: userAccessToken,
-      }, (response) => {
-        const pageAccessToken = response.data[0].access_token;
-
-        console.log('accounts');
-        FB.api(
-          '/1858035424460206/promotable_posts',
-          'GET',
-          {
-            access_token: pageAccessToken,
-            is_published: false,
-          },
-          (response) => {
-            console.log(response);
-            this.setState({
-              unpublishedPosts: response.data,
-            });
-          },
-        );
-      });
-    }
+    FB.api(
+      `/${this.props.pageId}/promotable_posts`,
+      'GET',
+      {
+        access_token: `${this.props.pageToken}`,
+        is_published: false,
+      },
+      (response) => {
+        console.log(response);
+        this.setState({
+          unpublishedPosts: response.data,
+        });
+      },
+    );
   }
 
   fetchPublishedPosts() {
-    const userAccessToken = Auth.getCookieInfo('userAccessToken');
 
     console.log('fetching publishedPosts');
+    FB.api(
+      `/${this.props.pageId}/posts/`,
+      'GET',
+      {
+        access_token: `${this.props.pageToken}`,
+      },
+      (response) => {
+        console.log(response);
 
-    if (FB) {
-      FB.api('/me/accounts', {
-        access_token: userAccessToken,
-      }, (response) => {
-        const pageAccessToken = response.data[0].access_token;
+        response.data.forEach((d, i) => {
+          FB.api(
+            `/${d.id}/insights/post_impressions_unique`,
+            'GET',
+            {
+              access_token: `${this.props.pageToken}`,
+            },
+            (res) => {
+              response.data[i].views = res.data[0].values[0].value;
 
-        FB.api(
-          '/1858035424460206/posts/',
-          'GET',
-          {
-            access_token: pageAccessToken,
-          },
-          (response) => {
-            console.log(response);
-
-            response.data.forEach((d, i) => {
-              FB.api(
-                `/${d.id}/insights/post_impressions_unique`,
-                'GET',
-                {
-                  access_token: pageAccessToken,
-                },
-                (res) => {
-                  console.log(res);
-                  console.log(i);
-                  response.data[i].views = res.data[0].values[0].value;
-
-                  this.setState({
-                    publishedPosts: response.data,
-                  });
-                },
-              );
-            });
-
-            console.log('responsesWithViews', responseWithViews);
-            this.setState({
-              publishedPosts: response.data,
-            });
-          },
-        );
-      });
-    }
+              this.setState({
+                publishedPosts: response.data,
+              });
+            },
+          );
+        });
+        this.setState({
+          publishedPosts: response.data,
+        });
+      },
+    );
   }
 
   publishPost(id) {
-    console.log('id', id);
 
-    const userAccessToken = Auth.getCookieInfo('userAccessToken');
-
-    if (FB) {
-      FB.api('/me/accounts', {
-        access_token: userAccessToken,
-      }, (response) => {
-        const pageAccessToken = response.data[0].access_token;
-
-        FB.api(
-          `/${id}/`,
-          'POST',
-          {
-            access_token: pageAccessToken,
-            is_published: true,
-          },
-          (response) => {
-            console.log(response);
-            this.fetchPublishedPosts();
-            this.fetchUnpublishedPosts();
-          },
-        );
-      });
-    }
+    FB.api(
+      `/${id}/`,
+      'POST',
+      {
+        access_token: `${this.props.pageToken}`,
+        is_published: true,
+      },
+      (response) => {
+        this.fetchPublishedPosts();
+        this.fetchUnpublishedPosts();
+      },
+    );
   }
 
   getPostViews(id) {
-    console.log('id', id);
 
-    const userAccessToken = Auth.getCookieInfo('userAccessToken');
-
-    if (FB) {
-      FB.api('/me/accounts', {
-        access_token: userAccessToken,
-      }, (response) => {
-        const pageAccessToken = response.data[0].access_token;
-
-        FB.api(
-          `/${id}/insights/post_engaged_fan`, // impressions_unique',
-          'GET',
-          {
-            access_token: pageAccessToken,
-          },
-          (response) => {
-            console.log(response);
-              // this.fetchPublishedPosts();
-              // this.fetchUnpublishedPosts();
-          },
-        );
-      });
-    }
+    FB.api(
+      `/${id}/insights/post_impressions_unique`,
+      'GET',
+      {
+        access_token: `${this.props.pageToken}`,
+      },
+      (response) => {
+        console.log(response);
+      },
+    );
   }
 
   render() {
@@ -174,7 +129,8 @@ class PostsHistory extends React.Component {
                 <div>{pp.views}</div>
               </div>
               <div className="panel-footer">
-                <button onClick={this.getPostViews.bind(this, pp.id)}>Get Views</button>
+                {//<button onClick={this.getPostViews.bind(this, pp.id)}>Get Views</button>
+                }
               </div>
             </section>
           ))
@@ -205,6 +161,11 @@ class PostsHistory extends React.Component {
 
 class PostToPage extends React.Component {
 
+  static propTypes = {
+    pageId: PropTypes.string,
+    pageToken: PropTypes.string
+  }.isRequired
+
   constructor(props) {
     super(props);
 
@@ -219,7 +180,6 @@ class PostToPage extends React.Component {
 
   componentDidMount() {
 
-
   }
 
   handleChange(e) {
@@ -232,38 +192,27 @@ class PostToPage extends React.Component {
 
   postToPage(e) {
     e.preventDefault();
+    let published = false;
+    if (this.state.postType == '2') { published = true; }
 
-    const userAccessToken = Auth.getCookieInfo('userAccessToken');
+    FB.api(
+      `/${this.props.pageId}/feed/`,
+      'POST',
+      {
+        message: this.state.message,
+        access_token: `${this.props.pageToken}`,
+        published,
+      },
+      (response) => {
+        console.log(response);
 
-
-    FB.api('/me/accounts', {
-      access_token: userAccessToken,
-    }, (response) => {
-      const pageAccessToken = response.data[0].access_token;
-      let published = false;
-      if (this.state.postType == '2') { published = true; }
-
-      console.log(published);
-
-      FB.api(
-        '/1858035424460206/feed/',
-        'POST',
-        {
-          message: this.state.message,
-          access_token: pageAccessToken,
-          published,
-        },
-        (response) => {
-          console.log(response);
-
-          if (response.id) {
-            this.setState({
-              message: '',
-            });
-          }
-        },
-      );
-    });
+        if (response.id) {
+          this.setState({
+            message: '',
+          });
+        }
+      },
+    );
   }
 
   render() {
@@ -330,13 +279,45 @@ class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
+      pages: [],
+      currentPageId: "",
+      currentPageToken: "",
+      currentPageName: "Choose Page"
     };
     this.getUserData = this.getUserData.bind(this);
+    this.changePage = this.changePage.bind(this);
   }
 
   componentDidMount() {
-    this.getUserData();
+
+    const userAccessToken = Auth.getCookieInfo('userAccessToken');
+
+    FB.api('/me/accounts', {
+      access_token: userAccessToken,
+    }, (response) => {
+      var pages = response.data.map((d)=>{
+          return {
+            'cAccessToken': d.access_token,
+            'cId': d.id,
+            'cName': d.name
+          }
+      });
+
+      console.log(pages);
+      this.setState({
+        pages: pages
+      })
+    });
+
+  }
+
+  changePage(e){
+
+    this.setState({
+      currentPageId: e[0],
+      currentPageToken: e[1],
+      currentPageName: e[2]
+    });
   }
 
   async getUserData() {
@@ -348,7 +329,7 @@ class Dashboard extends React.Component {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
-          Authorization: `${token}`,
+          Authorization: token,
         },
       })
       .then((res) => {
@@ -377,6 +358,18 @@ class Dashboard extends React.Component {
           <div className="row">
             <div className={s.dashboard}>
 
+            <div className="row">
+              <div className="col-xs-8 col-xs-offset-2">
+                <div className="dropdown">
+                  <DropdownButton title={this.state.currentPageName} onSelect={this.changePage.bind(this)}>
+                  {this.state.pages.map((page) => (
+                    <MenuItem eventKey={[page.cId, page.cAccessToken, page.cName]}>{page.cName}</MenuItem>
+                    ))
+                  }
+                  </DropdownButton>
+                </div>
+              </div>
+            </div>
               <div className="row">
                 <div className="col-xs-6 col-xs-offset-3">
                   <ul className="pagination">
@@ -387,38 +380,10 @@ class Dashboard extends React.Component {
               </div>
               <div className="row">
                 <div className="col-xs-8 col-xs-offset-2">
-                  <PostToPage />
-                  <PostsHistory />
+                  <PostToPage pageId={this.state.currentPageId} pageToken={this.state.currentPageToken}/>
+                  <PostsHistory pageId={this.state.currentPageId} pageToken={this.state.currentPageToken}/>
                 </div>
               </div>
-              {/*
-              data.map((contact) => (
-                <div className="col-xs-4" key={contact._id}>
-                  <div className="card">
-                    <div className="row">
-                      <div className="col-xs-10">
-                        <img className="card-img-top" src={`https://api.adorable.io/avatars/100/${contact.email}.png`} alt="Card image cap"/>
-                        <div className="card-block">
-                          <h4 className="card-title">{contact.firstName} {contact.lastName}</h4>
-                        </div>
-                      </div>
-                    </div>
-                    <ul className="list-group list-group-flush">
-                      <li className="list-group-item">{contact.email}</li>
-                    </ul>
-                    <div className="card-block col-xs-12">
-                      <div className="col-xs-6">
-                        <a href="#" className="card-link">Learn More</a>
-                      </div>
-                      <div className="col-xs-6">
-                        <a href="#" className="card-link">Schedule Call</a>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              ))
-            */}
             </div>
           </div>
         </div>

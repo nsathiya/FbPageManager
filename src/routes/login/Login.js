@@ -30,10 +30,10 @@ class Login extends React.Component {
 
 
   componentDidMount() {
-    // FB.getLoginStatus((response) => {
-    //   console.log('Got login status');
-    //   this.statusChangeCallback(response);
-    // });
+    FB.getLoginStatus((response) => {
+      console.log('Got login status');
+      this.statusChangeCallback(response);
+    });
   }
   // componentDidMount() {
   //   window.fbAsyncInit = function() {
