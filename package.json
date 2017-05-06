@@ -32,6 +32,7 @@
     "history": "^4.5.1",
     "isomorphic-style-loader": "^1.1.0",
     "jsonwebtoken": "^7.2.1",
+    "moment": "^2.18.1",
     "mongodb": "^2.2.24",
     "mongoose": "^4.8.6",
     "morgan": "^1.8.1",

@@ -7,11 +7,11 @@ class Auth {
   }
 
   static isUserAuthenticated() {
-    return cookie.load('token') !== undefined;
+    return cookie.load('userAccessToken') !== undefined;
   }
 
   static deauthenticateUser() {
-    cookie.remove('token', {path: '/'});
+    cookie.remove('userAccessToken', {path: '/'});
   }
 
   static getToken() {

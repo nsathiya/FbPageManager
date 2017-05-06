@@ -10,10 +10,10 @@ import { mongodbHost } from '../config';
 const mongodbUrl = `mongodb://${mongodbHost}` + ':15834/telivy_staging?ssl=true';
 
 // COLLECTIONS
-const collectionSplash = 'splashData';
+const collectionSplash = 'SplashData2';
 const collectionUser = 'users';
 
-// eslint-disable-next-line 
+// eslint-disable-next-line
 let _connection;
 const connect = () => {
 	if (!mongodbUrl) {
@@ -37,7 +37,7 @@ const connectMongoose = () => {
 	if (!mongodbUrl) {
 	    throw new Error('Environment variable MONGODB_HOST must be set to use API.');
 	}
-	
+
 	return promisify(MongooseClient.connect)(mongodbUrl);
 }
 // returns a db object

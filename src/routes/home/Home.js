@@ -9,8 +9,9 @@
 
 import React, { PropTypes } from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import Link from '../../components/Link/Link.js';
 import s from './Home.css';
-import image from './profbg2.jpeg';
+import image from './bluehome.jpg';
 
 const mainImage = {
   backgroundImage: `url(${image})`,
@@ -31,15 +32,22 @@ class Home extends React.Component {
 
           <section className={s.mainImg} style={mainImage} >
             <div className="row">
-              <div className={s.mainLogo}>
-                <h1 className="col-xs-6 col-xs-offset-3"> Get answers from experts. Right away. </h1>
+              <div className={s.mainLogo} style={{"text-align":"center"}}>
+                <h1 className="col-xs-8 col-xs-offset-2"> Manage All Your FB Pages. From One Portal. </h1>
+              </div>
+            </div>
+            <div className="row">
+              <div style={{"text-align":"center"}}>
+                <Link className={s.brand} to="/dashboard">
+                <button className="btn btn-warning btn-lg" >Start > </button>
+                </Link>
               </div>
             </div>
           </section>
 
           <section>
             <div className="row">
-              <h1 className="col-xs-6 col-xs-offset-3"> Let us help you, get help faster. </h1>
+              <h1 className="col-xs-8 col-xs-offset-2"> Be organized and informed with our dashboard. </h1>
             </div>
           </section>
 
@@ -48,7 +56,7 @@ class Home extends React.Component {
               {this.props.data.map((item, i) => (
                 <div className="col-xs-4" key={i}>
                   <h4>{item.title}</h4>
-                  <div>{item.content}</div>
+                  <div><b>{item.content}</b></div>
                 </div>
                 ),
               )}

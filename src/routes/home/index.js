@@ -33,7 +33,7 @@ export default {
     console.log('__data__', data);
     if (!data) throw new Error('Failed to load splash data.');
     return {
-      title: 'Telivy',
+      title: 'FB Page Manager',
       component: <Layout><Home data={data} /></Layout>,
     };
   },

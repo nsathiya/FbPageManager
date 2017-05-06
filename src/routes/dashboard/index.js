@@ -21,7 +21,7 @@ export default {
     //   }),
     //   credentials: 'include',
     // });
-    
+
     // const token = Auth.getToken();
     // console.log('token', token)
     // const resp = await fetch('/allUsers', {
@@ -38,7 +38,7 @@ export default {
     // console.log('__data__', data);
     // if (!data) throw new Error('Failed to load users');
     return {
-      title: 'Telivy',
+      title: 'FB Page Manager',
       component: <Layout><Dashboard/></Layout>,
     };
   },
